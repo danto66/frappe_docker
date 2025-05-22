@@ -9,7 +9,11 @@ To get started you need [Docker](https://docs.docker.com/get-docker/), [docker-c
 
 # Deploy Custom App
 
+This section explains how to deploy your own custom Frappe app using Docker.
+
 ## Build Image
+
+Build a Docker image that includes your custom Frappe app by following the steps below.
 
 ### Load custom apps through apps.json file
 
@@ -52,7 +56,7 @@ echo -n ${APPS_JSON_BASE64} | base64 -d > apps-test-output.json
 
 ### Configure google service account
 
-Put service account to `resources/google-cloud-storage.json`
+Put service account to `./resources/google-cloud-storage.json`
 
 ### Configure build
 
@@ -97,30 +101,33 @@ Custom build args,
 
 ## Docker Command
 
-## Compose up
+This section provides the basic Docker command to run your custom Frappe image.
+
+### Compose up
 
 ```shell
 docker compose -f pwd.yml up -d
 ```
 
-## Show logs
+### Show logs
 
 ```shell
 docker logs frappe_docker-create-site-1 -f
 ```
 
-## Compose down
+### Compose down
 
 ```shell
 docker compose -f pwd.yml down
 ```
 
-# Contributing
+### Open a Bash shell
 
-If you want to contribute to this repo refer to [CONTRIBUTING.md](CONTRIBUTING.md)
+```shell
+docker exec -it frappe_docker-backend-1 bash
+```
 
-This repository is only for container related stuff. You also might want to contribute to:
+# Documentation
 
-- [Frappe framework](https://github.com/frappe/frappe#contributing),
-- [ERPNext](https://github.com/frappe/erpnext#contributing),
-- [Frappe Bench](https://github.com/frappe/bench).
+- [Frappe Docker GitHub Repository](https://github.com/frappe/frappe_docker)
+- [Frappe Framework Documentation](https://docs.frappe.io/framework/user/en/introduction)
