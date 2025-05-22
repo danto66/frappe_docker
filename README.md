@@ -59,7 +59,7 @@ echo -n ${APPS_JSON_BASE64} | base64 -d > apps-test-output.json
 
 ### Setup Google Service Account
 
-Put service account to `resources/google-service-account.json`
+Put service account to `resources/google-cloud-storage.json`
 
 ### Configure build
 
