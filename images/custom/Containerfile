@@ -133,7 +133,7 @@ RUN export APP_INSTALL_ARGS="" && \
 
 # Setup Google Service Account
 RUN mkdir -p /home/frappe/frappe-bench/secrets
-COPY resources/google-service-account.json /home/frappe/frappe-bench/secrets/google-service-account.json
+COPY resources/google-cloud-storage.json /home/frappe/frappe-bench/secrets/google-cloud-storage.json
 
 FROM base AS backend
 
