@@ -115,7 +115,6 @@ USER frappe
 
 ARG FRAPPE_BRANCH=version-15
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
-ARG BUILD_NO_CACHE=1
 RUN export APP_INSTALL_ARGS="" && \
   if [ -n "${APPS_JSON_BASE64}" ]; then \
   export APP_INSTALL_ARGS="--apps_path=/opt/frappe/apps.json"; \
@@ -131,6 +130,10 @@ RUN export APP_INSTALL_ARGS="" && \
   cd /home/frappe/frappe-bench && \
   echo "{}" > sites/common_site_config.json && \
   find apps -mindepth 1 -path "*/.git" | xargs rm -fr
+
+ARG BUILD_NO_CACHE=1
+RUN cd /home/frappe/frappe-bench && \
+  bench update --pull
 
 # Setup Google Service Account
 RUN mkdir -p /home/frappe/frappe-bench/secrets
