@@ -9,8 +9,8 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
     environment:
       DB_HOST: db
       DB_PORT: "3306"
@@ -43,8 +43,8 @@ services:
       REDIS_QUEUE: redis-queue:6379
       SOCKETIO_PORT: "9000"
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
 
   create-site:
     image: frappe-bio-ga:latest
@@ -54,8 +54,8 @@ services:
       restart_policy:
         condition: none
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
     entrypoint:
       - bash
       - -c
@@ -122,8 +122,8 @@ services:
       PROXY_READ_TIMEOUT: 120
       CLIENT_MAX_BODY_SIZE: 50m
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
     ports:
       - "8080:8080"
 
@@ -140,8 +140,8 @@ services:
       - --queue
       - long,default,short
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
 
   queue-short:
     image: frappe-bio-ga:latest
@@ -156,8 +156,8 @@ services:
       - --queue
       - short,default
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
 
   redis-queue:
     image: redis:6.2-alpine
@@ -188,8 +188,8 @@ services:
       - bench
       - schedule
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
 
   websocket:
     image: frappe-bio-ga:latest
@@ -202,8 +202,8 @@ services:
       - node
       - /home/frappe/frappe-bench/apps/frappe/socketio.js
     volumes:
-      - ./sites:/home/frappe/frappe-bench/sites
-      - ./logs:/home/frappe/frappe-bench/logs
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
 
 volumes:
   db-data:
