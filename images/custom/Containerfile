@@ -152,7 +152,7 @@ VOLUME [ \
 CMD [ \
   "/home/frappe/frappe-bench/env/bin/gunicorn", \
   "--chdir=/home/frappe/frappe-bench/sites", \
-  "--bind=0.0.0.0:8000", \
+  "--bind=0.0.0.0:8001", \
   "--threads=4", \
   "--workers=2", \
   "--worker-class=gthread", \
