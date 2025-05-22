@@ -11,13 +11,6 @@ To get started you need [Docker](https://docs.docker.com/get-docker/), [docker-c
 
 ## Build Image
 
-### Clone frappe_docker and switch directory
-
-```shell
-git clone https://github.com/frappe/frappe_docker
-cd frappe_docker
-```
-
 ### Load custom apps through apps.json file
 
 Base64 encoded string of `apps.json` file needs to be passed in as build arg environment variable.
