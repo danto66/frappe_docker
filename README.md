@@ -11,6 +11,13 @@ To get started you need [Docker](https://docs.docker.com/get-docker/), [docker-c
 
 ## Build Image
 
+### Clone frappe_docker and switch directory
+
+```shell
+git clone https://github.com/frappe/frappe_docker
+cd frappe_docker
+```
+
 ### Load custom apps through apps.json file
 
 Base64 encoded string of `apps.json` file needs to be passed in as build arg environment variable.
@@ -53,13 +60,6 @@ echo -n ${APPS_JSON_BASE64} | base64 -d > apps-test-output.json
 ### Setup Google Service Account
 
 Put service account to `resources/google-service-account.json`
-
-### Clone frappe_docker and switch directory
-
-```shell
-git clone https://github.com/frappe/frappe_docker
-cd frappe_docker
-```
 
 ### Configure build
 
@@ -107,6 +107,12 @@ Custom build args,
 
 ```shell
 docker compose -f pwd.yml up -d
+```
+
+## Show docker logs
+
+```shell
+docker logs frappe_docker-create-site-1 -f
 ```
 
 ## Docker Compose Down
