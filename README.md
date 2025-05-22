@@ -50,7 +50,7 @@ echo -n ${APPS_JSON_BASE64} | base64 -d > apps-test-output.json
 
 2. Open the apps-test-output.json file to review the JSON output and ensure that the content is correct.
 
-### Setup Google Service Account
+### Configure google service account
 
 Put service account to `resources/google-cloud-storage.json`
 
@@ -78,6 +78,7 @@ It uses `images/custom/Containerfile`.
 ```shell
 docker build \
   --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
+  --build-arg BUILD_NO_CACHE=$(date +%s)
   --build-arg=FRAPPE_BRANCH=version-15 \
   --build-arg=PYTHON_VERSION=3.11.9 \
   --build-arg=NODE_VERSION=18.20.2 \
@@ -94,21 +95,21 @@ Custom build args,
 - `WKHTMLTOPDF_VERSION`, use the specified qt patched `wkhtmltopdf` version. Default is `0.12.6.1-3`.
 - `WKHTMLTOPDF_DISTRO`, use the specified distro for debian package. Default is `bookworm`.
 
-## Run Docker
+## Docker Command
 
-## Docker Compose Up
+## Compose up
 
 ```shell
 docker compose -f pwd.yml up -d
 ```
 
-## Show docker logs
+## Show logs
 
 ```shell
 docker logs frappe_docker-create-site-1 -f
 ```
 
-## Docker Compose Down
+## Compose down
 
 ```shell
 docker compose -f pwd.yml down
