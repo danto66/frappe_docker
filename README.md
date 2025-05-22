@@ -7,77 +7,113 @@ Everything about [Frappe](https://github.com/frappe/frappe) and [ERPNext](https:
 
 To get started you need [Docker](https://docs.docker.com/get-docker/), [docker-compose](https://docs.docker.com/compose/), and [git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git) setup on your machine. For Docker basics and best practices refer to Docker's [documentation](http://docs.docker.com).
 
-Once completed, chose one of the following two sections for next steps.
+# Deploy Custom App
 
-### Try in Play With Docker
+## Build Image
 
-To play in an already set up sandbox, in your browser, click the button below:
+### Load custom apps through apps.json file
 
-<a href="https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/frappe/frappe_docker/main/pwd.yml">
-  <img src="https://raw.githubusercontent.com/play-with-docker/stacks/master/assets/images/button.png" alt="Try in PWD"/>
-</a>
+Base64 encoded string of `apps.json` file needs to be passed in as build arg environment variable.
 
-### Try on your Dev environment
+Create the following `./resources/apps.json` file:
 
-First clone the repo:
+```json
+[
+  {
+    "url": "https://{{username}}:{{personal-access-token}}@git.example.com/project/repository.git",
+    "branch": "main"
+  }
+]
+```
 
-```sh
+Note:
+
+- The `url` needs to be http(s) git url with personal access tokens in case of private repo.
+- Add dependencies manually in `apps.json` e.g. add `erpnext` if you are installing `hrms`.
+- Use fork repo or branch for ERPNext in case you need to use your fork or test a PR.
+
+Generate base64 string from json file:
+
+```shell
+export APPS_JSON_BASE64=$(base64 -w 0 ./resources/apps.json)
+```
+
+Test the Previous Step: Decode the Base64-encoded Environment Variable
+
+To verify the previous step, decode the `APPS_JSON_BASE64` environment variable (which is Base64-encoded) into a JSON file. Follow the steps below:
+
+1. Use the following command to decode and save the output into a JSON file named apps-test-output.json:
+
+```shell
+echo -n ${APPS_JSON_BASE64} | base64 -d > apps-test-output.json
+```
+
+2. Open the apps-test-output.json file to review the JSON output and ensure that the content is correct.
+
+### Setup Google Service Account
+
+Put service account to `resources/google-service-account.json`
+
+### Clone frappe_docker and switch directory
+
+```shell
 git clone https://github.com/frappe/frappe_docker
 cd frappe_docker
 ```
 
-Then run: `docker compose -f pwd.yml up -d`
+### Configure build
 
-### To run on ARM64 architecture follow this instructions
+Common build args.
 
-After cloning the repo run this command to build multi-architecture images specifically for ARM64.
+- `FRAPPE_PATH`, customize the source repo for frappe framework. Defaults to `https://github.com/frappe/frappe`
+- `FRAPPE_BRANCH`, customize the source repo branch for frappe framework. Defaults to `version-15`.
+- `APPS_JSON_BASE64`, correct base64 encoded JSON string generated from `apps.json` file.
 
-`docker buildx bake --no-cache --set "*.platform=linux/arm64"`
+Notes
 
-and then
+- Use `buildah` or `docker` as per your setup.
+- Make sure `APPS_JSON_BASE64` variable has correct base64 encoded JSON string. It is consumed as build arg, base64 encoding ensures it to be friendly with environment variables. Use `jq empty apps.json` to validate `apps.json` file.
+- Make sure the `--tag` is valid image name that will be pushed to registry. See section [below](#use-images) for remarks about its use.
+- `.git` directories for all apps are removed from the image.
 
-- add `platform: linux/arm64` to all services in the `pwd.yml`
-- replace the current specified versions of erpnext image on `pwd.yml` with `:latest`
+### Custom build image
 
-Then run: `docker compose -f pwd.yml up -d`
+This method builds the base and build layer every time, it allows to customize Python and NodeJS runtime versions. It takes more time to build.
 
-## Final steps
+It uses `images/custom/Containerfile`.
 
-Wait for 5 minutes for ERPNext site to be created or check `create-site` container logs before opening browser on port 8080. (username: `Administrator`, password: `admin`)
+```shell
+docker build \
+  --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
+  --build-arg=FRAPPE_BRANCH=version-15 \
+  --build-arg=PYTHON_VERSION=3.11.9 \
+  --build-arg=NODE_VERSION=18.20.2 \
+  --build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
+  --tag=frappe-bio-ga \
+  --file=images/custom/Containerfile .
+```
 
-If you ran in a Dev Docker environment, to view container logs: `docker compose -f pwd.yml logs -f create-site`. Don't worry about some of the initial error messages, some services take a while to become ready, and then they go away.
+Custom build args,
 
-# Documentation
+- `PYTHON_VERSION`, use the specified python version for base image. Default is `3.11.6`.
+- `NODE_VERSION`, use the specified nodejs version, Default `18.18.2`.
+- `DEBIAN_BASE` use the base Debian version, defaults to `bookworm`.
+- `WKHTMLTOPDF_VERSION`, use the specified qt patched `wkhtmltopdf` version. Default is `0.12.6.1-3`.
+- `WKHTMLTOPDF_DISTRO`, use the specified distro for debian package. Default is `bookworm`.
 
-### [Frequently Asked Questions](https://github.com/frappe/frappe_docker/wiki/Frequently-Asked-Questions)
+## Run Docker
 
-### [Production](#production)
+## Docker Compose Up
 
-- [List of containers](docs/list-of-containers.md)
-- [Single Compose Setup](docs/single-compose-setup.md)
-- [Environment Variables](docs/environment-variables.md)
-- [Single Server Example](docs/single-server-example.md)
-- [Setup Options](docs/setup-options.md)
-- [Site Operations](docs/site-operations.md)
-- [Backup and Push Cron Job](docs/backup-and-push-cronjob.md)
-- [Port Based Multi Tenancy](docs/port-based-multi-tenancy.md)
-- [Migrate from multi-image setup](docs/migrate-from-multi-image-setup.md)
-- [running on linux/mac](docs/setup_for_linux_mac.md)
-- [TLS for local deployment](docs/tls-for-local-deployment.md)
+```shell
+docker compose -f pwd.yml up -d
+```
 
-### [Custom Images](#custom-images)
+## Docker Compose Down
 
-- [Custom Apps](docs/custom-apps.md)
-- [Custom Apps with podman](docs/custom-apps-podman.md)
-- [Build Version 10 Images](docs/build-version-10-images.md)
-
-### [Development](#development)
-
-- [Development using containers](docs/development.md)
-- [Bench Console and VSCode Debugger](docs/bench-console-and-vscode-debugger.md)
-- [Connect to localhost services](docs/connect-to-localhost-services-from-containers-for-local-app-development.md)
-
-### [Troubleshoot](docs/troubleshoot.md)
+```shell
+docker compose -f pwd.yml down
+```
 
 # Contributing
 
