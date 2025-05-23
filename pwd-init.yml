@@ -112,6 +112,7 @@ services:
 
 volumes:
   db-data:
+  redis-queue-data:
   sites:
   logs:
 
